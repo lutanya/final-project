@@ -1,0 +1,10 @@
+table{
+  border-collapse: collapse;
+ 
+}
+TD, TH {
+    
+    border: 1px solid black; 
+    text-align: center;
+   
+}
