@@ -3,14 +3,19 @@ package by.training.webapplication.mail;
 
 
 
+import by.training.webapplication.util.MD5;
+
 import javax.mail.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
  * Created by Tanya on 31.08.2016.
  */
 public class MailThread extends Thread {
-    //private MimeMessage message;
+    private MimeMessage message;
     private String sendToEmail;
     private String mailSubject;
     private String mailText;
@@ -25,7 +30,7 @@ public class MailThread extends Thread {
     private void init(){
         Session mailSession = (new SessionCreator(properties)).createSession();
         mailSession.setDebug(true);
-        /*message = new MimeMessage(mailSession);
+        message = new MimeMessage(mailSession);
         try{
             message.setSubject(mailSubject);
             message.setContent(mailText,"text/html");
@@ -43,6 +48,6 @@ public class MailThread extends Thread {
             Transport.send(message);
         }catch (MessagingException e){
             System.err.println("Ошибка при отправлении сообщения" + e);
-        }*/
+        }
     }
 }

@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="ctg" uri="customtags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <fmt:setLocale value= "${local}" scope="session"></fmt:setLocale>
 <fmt:setBundle basename="pagecontext" var="rb"></fmt:setBundle>
 <html>
@@ -25,7 +26,14 @@
 </ul>
 <br>
 <p class="openobj">
-    <a href="/jsp/registration.jsp"><fmt:message key="header.reg" bundle="${rb}"></fmt:message></a>|<a href="/jsp/login.jsp"><fmt:message key="header.log" bundle="${rb}"></fmt:message></a>
+    <c:if test="${username == null}">
+        <a href="/jsp/registration.jsp"><fmt:message key="header.reg" bundle="${rb}"></fmt:message></a>|
+        <a href="/jsp/login.jsp"><fmt:message key="header.log" bundle="${rb}"></fmt:message></a>
+    </c:if>
+<c:if test="${username != null}">
+    <a href="/jsp/personalareaadmin.jsp"><fmt:message key="header.office" bundle="${rb}"></fmt:message></a>|
+    <a href="/controller?command=logout"><fmt:message key="header.logout" bundle="${rb}"></fmt:message></a>
+</c:if>
 </p>
 </body>
 </html>

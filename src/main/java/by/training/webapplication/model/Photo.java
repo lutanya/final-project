@@ -7,7 +7,8 @@ public class Photo {
 
     private String fotoUrl;
     private String fotoInfo;
-
+    private boolean last;
+    private boolean first;
 
 
     public String getFotoUrl() {
@@ -24,5 +25,21 @@ public class Photo {
 
     public void setFotoInfo(String fotoInfo) {
         this.fotoInfo = fotoInfo;
+    }
+
+    public boolean isLast() {
+        return last;
+    }
+
+    public void setLast(boolean last) {
+        this.last = last;
+    }
+
+    public boolean isFirst() {
+        return first;
+    }
+
+    public void setFirst(boolean first) {
+        this.first = first;
     }
 }

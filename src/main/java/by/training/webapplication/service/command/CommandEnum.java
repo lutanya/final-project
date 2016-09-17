@@ -43,6 +43,11 @@ public enum CommandEnum {
         {
             this.command = new WorkInfoCommand();
         }
+    },
+    VIEWMESSAGE{
+        {
+            this.command = new ViewMessageCommand();
+        }
     };
     ActionCommand command;
     public ActionCommand getCurrentCommand(){

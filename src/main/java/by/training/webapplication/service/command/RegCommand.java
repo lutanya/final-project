@@ -2,6 +2,7 @@ package by.training.webapplication.service.command;
 
 import by.training.webapplication.model.User;
 import by.training.webapplication.service.AuthService;
+import by.training.webapplication.service.command.manager.ConfigurationManager;
 import by.training.webapplication.web.validator.Validator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,8 +38,9 @@ public class RegCommand implements ActionCommand {
         if(Validator.RegValid(request, user)) {
             if (new AuthService().isUserRegistered(user)) {
                 System.out.println("Good registr");
-                request.setAttribute("user", user.getLogin());
-                page = ConfigurationManager.getProperty("path.page.main");
+                request.getSession().setAttribute("username", user.getName());
+                request.getSession().setAttribute("userlastname", user.getLastname());
+                page = ConfigurationManager.getProperty("path.page.sucsreg");
             } else {
                 page = ConfigurationManager.getProperty("path.page.registr");
             }

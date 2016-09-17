@@ -1,5 +1,7 @@
 package by.training.webapplication.service.command;
 
+import by.training.webapplication.service.command.manager.ConfigurationManager;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

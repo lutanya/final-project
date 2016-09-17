@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import static by.training.webapplication.service.command.ActionFactory.logger;
 
 /**
  * Created by Tanya on 08.09.2016.
@@ -32,7 +33,7 @@ public class OrderDAO extends AbstractDAO<String, Order> {
             st = connection.prepareStatement(SQL_SELECT_OBJECT_BY_KINDOFWORK);
 
             st.setString(1, id);
-            //System.out.println(id);
+
             ResultSet resultSet = st.executeQuery();
 
             if(resultSet.next()) {
@@ -43,6 +44,8 @@ public class OrderDAO extends AbstractDAO<String, Order> {
         } catch (SQLException e) {
             throw new DaoException(e);
 
+        }finally {
+            closeSt(st);
         }
         return order;
     }

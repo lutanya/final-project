@@ -38,9 +38,6 @@ public class DBPoolConnection {
                 }
             }
         }
-        prop.put("autoReconnect", "true");
-        prop.put("characterEncoding", "UTF-8");
-        prop.put("useUnicode", "true");
         Connection cn = null;
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
@@ -59,13 +56,14 @@ public class DBPoolConnection {
             connections.add(new ProxyConnection(cn));
         }
     }
+
     public static DBPoolConnection initConnectionPool() {
         if (!instanceCreated.get()) {
             lock.lock();
             try {
                 if (!instanceCreated.get()) {
                     pool = new DBPoolConnection();
-                    instanceCreated.set(true);
+                    instanceCreated.getAndSet(true);
 
                 }
             } catch (Exception e) {
@@ -77,6 +75,7 @@ public class DBPoolConnection {
         }
         return pool;
     }
+
     public Connection getConnection() throws SQLException {
         try {
             return connections.take();
@@ -84,7 +83,20 @@ public class DBPoolConnection {
             return null;
         }
     }
+
     public void putConnection(Connection connection) throws SQLException {
         connections.add(connection);
+    }
+
+    public void closeDBPoolConection() {
+        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+            try {
+                connections.take().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

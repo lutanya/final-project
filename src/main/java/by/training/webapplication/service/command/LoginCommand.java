@@ -1,6 +1,9 @@
 package by.training.webapplication.service.command;
 
 import by.training.webapplication.service.AuthService;
+import by.training.webapplication.service.command.manager.ConfigurationManager;
+import by.training.webapplication.service.command.manager.MessageManager;
+import by.training.webapplication.service.exception.LogicException;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginCommand implements ActionCommand {
     private static final String PARAM_NAME_LOGIN = "login";
     private static final String PARAM_NAME_PASSWORD = "password";
+    private MessageManager messageManager;
 
     private AuthService authService;
 
@@ -23,14 +27,15 @@ public class LoginCommand implements ActionCommand {
 
         try {
             if (getAuthService().checkLogin(login, pass)) {
-                request.setAttribute("user", login);
+                request.getSession().setAttribute("username", login);
+
                 page = ConfigurationManager.getProperty("path.page.main");
             } else {
                 page = ConfigurationManager.getProperty("path.page.login");
-                request.getSession().setAttribute("errorLoginPwdMessage", MessageManager.getProperty("message.loginpasserror"));
+                request.getSession().setAttribute("errorLoginPwdMessage", getMessageManager().getProperty("message.loginpasserror"));
             }
-        } catch (LoginException e1) {
-            e1.printStackTrace();
+        } catch (LogicException e) {
+            e.printStackTrace();
         }
 
                 /*case 3:
@@ -61,5 +66,12 @@ public class LoginCommand implements ActionCommand {
             authService = new AuthService();
         }
         return authService;
+    }
+
+    public MessageManager getMessageManager() {
+        if (messageManager == null){
+            messageManager = new MessageManager();
+        }
+        return messageManager;
     }
 }

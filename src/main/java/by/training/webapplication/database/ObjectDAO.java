@@ -3,6 +3,7 @@ package by.training.webapplication.database;
 import by.training.webapplication.database.exception.DaoException;
 import by.training.webapplication.model.ObjPortfolio;
 import by.training.webapplication.model.Photo;
+import static by.training.webapplication.service.command.ActionFactory.logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,10 +46,10 @@ public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
             ResultSet resultSetForPhoto;
             ObjPortfolio o;
             Photo ph;
+            int i;
             while (resultSet.next()) {
                 o = new ObjPortfolio();
                 ph = new Photo();
-                //System.out.println(resultSet.getString("password") + resultSet.getString("login"));
 
                 o.setId(resultSet.getInt("idPortfolio_obj"));
                 o.setObjName(resultSet.getString("object_name"));
@@ -56,32 +57,36 @@ public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
                 o.setObjGenre(resultSet.getString("object_genre"));
 
                 stForPhoto = null;
-                stForPhoto = connection.prepareStatement(SQL_SELECT_PHOTO);
-            stForPhoto.setInt(1, o.getId());
+                try {
+                    stForPhoto = connection.prepareStatement(SQL_SELECT_PHOTO);
+                    stForPhoto.setInt(1, o.getId());
 
-            resultSetForPhoto = stForPhoto.executeQuery();
+                    resultSetForPhoto = stForPhoto.executeQuery();
+                    i = 0;
+                    while (resultSetForPhoto.next()) {
 
-            while(resultSetForPhoto.next()) {
-                //System.out.println(resultSetForPhoto.getString("foto_url") + resultSetForPhoto.getString("foto_info"));
-
-                ph.setFotoUrl(resultSetForPhoto.getString("foto_url"));
-                if(resultSetForPhoto.getString("foto_info")!=null)
-               ph.setFotoInfo(resultSetForPhoto.getString("foto_info"));
-                o.addObjPhoto(ph);
-            }
-
-                /*if(resultSetForPhoto.next()) {
-                    ph.setFotoId(resultSetForPhoto.getInt("portfolio_obj_id"));
-                    if(o.getId()== ph.getFotoId()) {
+                        if (i == 0) {
+                            ph.setFirst(true);
+                        }
                         ph.setFotoUrl(resultSetForPhoto.getString("foto_url"));
-                        ph.setFotoInfo(resultSetForPhoto.getString("foto_info"));
+                        if (resultSetForPhoto.getString("foto_info") != null)
+                            ph.setFotoInfo(resultSetForPhoto.getString("foto_info"));
                         o.addObjPhoto(ph);
+                        i++;
                     }
-                }*/
-                listOfObj.add(o);
+                    if (i > 0) {
+                        ph.setLast(true);
+                        o.setObjPhoto(i - 1, ph);
+                    }
+                    listOfObj.add(o);
+                }finally {
+                    closeSt(stForPhoto);
+                }
             }
         } catch (SQLException e) {
             throw new DaoException(e);
+        }finally {
+           closeSt(st);
         }
         return listOfObj;
     }

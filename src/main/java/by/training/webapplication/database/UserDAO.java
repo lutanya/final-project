@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import static by.training.webapplication.service.command.ActionFactory.logger;
 
 /**
  * Created by Tanya on 24.07.2016.
@@ -44,6 +45,8 @@ public class UserDAO extends AbstractDAO<String, User>{
         } catch (SQLException e) {
            throw new DaoException(e);
 
+        }finally {
+            closeSt(st);
         }
         return user;
     }
@@ -72,6 +75,8 @@ public class UserDAO extends AbstractDAO<String, User>{
         } catch (SQLException e) {
             //throw new DaoException(e);
 
+        }finally {
+            closeSt(ps);
         }
         return false;
     }
@@ -92,6 +97,8 @@ public class UserDAO extends AbstractDAO<String, User>{
         } catch (SQLException e) {
             throw new DaoException(e);
 
+        }finally {
+           closeSt(st);
         }
         return false;
     }

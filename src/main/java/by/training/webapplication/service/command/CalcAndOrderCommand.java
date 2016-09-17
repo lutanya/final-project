@@ -19,11 +19,11 @@ public class CalcAndOrderCommand implements ActionCommand {
     private final static String PARAM_NAME_TYPE_OF_PROJ = "tprojec[]";
 
     @Override
-    public String execute(HttpServletRequest request) throws IOException {
+    public String execute(HttpServletRequest request) {
         String page = "/jsp/services.jsp";
         Order order = new Order();
         Enumeration<String> param = request.getParameterNames();
-            if(request.getParameter(PARAM_NAME_KIND_OF_WORK) != null && !request.getParameter(PARAM_NAME_OBJECT_SQUARE).equals("")){
+            if(request.getParameter(PARAM_NAME_KIND_OF_WORK) != null && !request.getParameter(PARAM_NAME_OBJECT_SQUARE).isEmpty()){
              order.setKindOfWork(request.getParameter(PARAM_NAME_KIND_OF_WORK));
             order.setSquareOfObj(Float.parseFloat(request.getParameter(PARAM_NAME_OBJECT_SQUARE)));
             while (param.hasMoreElements()) {

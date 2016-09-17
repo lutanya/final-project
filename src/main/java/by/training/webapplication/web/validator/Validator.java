@@ -3,7 +3,8 @@ package by.training.webapplication.web.validator;
 
 import by.training.webapplication.model.User;
 import by.training.webapplication.service.AuthService;
-import by.training.webapplication.service.command.MessageManager;
+import by.training.webapplication.service.command.manager.MessageManager;
+import by.training.webapplication.service.exception.LogicException;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ public class Validator {
     private static final String PARAM_NAME_PASSWORD = "pwd1";
     private static final String PARAM_NAME_PASSWORD_REPEAT = "pwd2";
 
+    private MessageManager messageManager;
+
     private AuthService authService;
 
     public static boolean RegValid(HttpServletRequest request, User user) {
@@ -34,7 +37,7 @@ public class Validator {
                 case PARAM_NAME_FIRSTNAME: {
                     if (request.getParameter(PARAM_NAME_FIRSTNAME).equals("")) {
                         flag = false;
-                        request.getSession().setAttribute("dontInputName", MessageManager.getProperty("message.inpName"));
+                        request.getSession().setAttribute("dontInputName", new MessageManager().getProperty("message.inpName"));
                     } else {
                         request.getSession().setAttribute("dontInputName", "");
                         request.getSession().setAttribute("fname", request.getParameter(PARAM_NAME_FIRSTNAME));
@@ -45,7 +48,7 @@ public class Validator {
                 case PARAM_NAME_SEX: {
                     System.out.println("sex: " + request.getParameter(PARAM_NAME_SEX));
                     if (request.getParameter(PARAM_NAME_SEX).equals("")) {
-                        request.getSession().setAttribute("dontInputSex", MessageManager.getProperty("message.inpSex"));
+                        request.getSession().setAttribute("dontInputSex", new MessageManager().getProperty("message.inpSex"));
                     } else {
                         request.getSession().setAttribute("dontInputSex", "");
                     }
@@ -54,7 +57,7 @@ public class Validator {
                 case PARAM_NAME_CONTRY: {
                     if (request.getParameter(PARAM_NAME_CONTRY).equals("a")) {
                         flag = false;
-                        request.getSession().setAttribute("dontInputCountry", MessageManager.getProperty("message.inpCountry"));
+                        request.getSession().setAttribute("dontInputCountry", new MessageManager().getProperty("message.inpCountry"));
 
                     } else {
                         request.getSession().setAttribute("dontInputCountry", "");
@@ -65,7 +68,7 @@ public class Validator {
                 case PARAM_NAME_CITY: {
                     if (request.getParameter(PARAM_NAME_CITY).equals("")) {
                         flag = false;
-                        request.getSession().setAttribute("dontInputCity", MessageManager.getProperty("message.inpCity"));
+                        request.getSession().setAttribute("dontInputCity", new MessageManager().getProperty("message.inpCity"));
 
                     } else {
                         request.getSession().setAttribute("dontInputCity", "");
@@ -77,14 +80,14 @@ public class Validator {
                     if (request.getParameter(PARAM_NAME_PASSWORD).equals("")) {
                         flag = false;
                         //command.getSession().setAttribute("wrongPsw", MessageManager.getProperty("message.wrongPsw"));
-                        request.setAttribute("wrongPsw", MessageManager.getProperty("message.wrongPsw"));
+                        request.setAttribute("wrongPsw", new MessageManager().getProperty("message.wrongPsw"));
                     } else {
                         //command.getSession().setAttribute("wrongPsw", "");
                         request.setAttribute("wrongPsw", "");
                         if (!request.getParameter(PARAM_NAME_PASSWORD).equals(request.getParameter(PARAM_NAME_PASSWORD_REPEAT))) {
                             flag = false;
                             //command.getSession().setAttribute("errorRepeatPass", MessageManager.getProperty("message.errorrepeat"));
-                            request.setAttribute("errorRepeatPass", MessageManager.getProperty("message.errorrepeat"));
+                            request.setAttribute("errorRepeatPass", new MessageManager().getProperty("message.errorrepeat"));
                         }
                     }
                     break;
@@ -94,14 +97,14 @@ public class Validator {
                     request.getSession().setAttribute("dontInputLogin", "");
                     if (request.getParameter(PARAM_NAME_LOGIN).equals("")) {
                         flag = false;
-                        request.getSession().setAttribute("dontInputLogin", MessageManager.getProperty("message.inpLogin"));
+                        request.getSession().setAttribute("dontInputLogin", new MessageManager().getProperty("message.inpLogin"));
                     } else {
                         try {
                             if (new AuthService().checkLogin(request.getParameter(PARAM_NAME_LOGIN))) {
                                 flag = false;
-                                request.getSession().setAttribute("doublicatelog", MessageManager.getProperty("message.doubllogin"));
+                                request.getSession().setAttribute("doublicatelog", new MessageManager().getProperty("message.doubllogin"));
                             }
-                        } catch (LoginException e) {
+                        } catch (LogicException e) {
                             e.printStackTrace();
                         }
                     }
@@ -110,7 +113,7 @@ public class Validator {
                 case PARAM_NAME_MAIL: {
                     if (request.getParameter(PARAM_NAME_MAIL).equals("")) {
                         flag = false;
-                        request.setAttribute("dontInputMail", MessageManager.getProperty("message.inpMail"));
+                        request.setAttribute("dontInputMail", new MessageManager().getProperty("message.inpMail"));
 
                     } else {
                         request.setAttribute("dontInputMail", "");
@@ -122,4 +125,13 @@ public class Validator {
         }
         return flag;
     }
+
+    public MessageManager getMessageManager() {
+        if( messageManager == null){
+            messageManager = new MessageManager();
+        }
+        return messageManager;
+    }
+
+
 }

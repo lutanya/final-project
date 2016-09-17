@@ -1,4 +1,4 @@
-package by.training.webapplication.service.command;
+package by.training.webapplication.service.command.manager;
 
 import java.util.ResourceBundle;
 
@@ -9,9 +9,9 @@ public class MessageManager {
 
     private final static ResourceBundle resourceBundle = ResourceBundle.getBundle("message");
 
-    private MessageManager(){}
+    public MessageManager(){}
 
-    public static String getProperty(String key){
+    public String getProperty(String key){
         return resourceBundle.getString(key);
     }
 }

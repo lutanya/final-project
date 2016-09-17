@@ -4,6 +4,7 @@ import by.training.webapplication.database.connection.DBPoolConnection;
 import by.training.webapplication.database.UserDAO;
 import by.training.webapplication.database.exception.DaoException;
 import by.training.webapplication.model.User;
+import by.training.webapplication.service.exception.LogicException;
 import by.training.webapplication.util.MD5;
 
 import javax.security.auth.login.LoginException;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
  */
 public class AuthService {
 
-    public boolean checkLogin(String enterLogin, String enterPass) throws LoginException {
+    public boolean checkLogin(String enterLogin, String enterPass) throws LogicException {
         MD5 md5 = new MD5();
         Connection cn = null;
         //boolean flag = false;
@@ -34,7 +35,7 @@ public class AuthService {
                     System.out.println("Wrong password");
                 }
             } catch (DaoException e) {
-                throw new LoginException();
+                throw new LogicException(e);
             } catch (SQLException e) {
                 e.printStackTrace();
             }finally {
@@ -50,7 +51,7 @@ public class AuthService {
         return false;
     }
 
-    public boolean checkLogin(String login) throws LoginException {
+    public boolean checkLogin(String login) throws LogicException {
         boolean flag = false;
         try {
             Connection cn = DBPoolConnection.initConnectionPool().getConnection();
@@ -58,7 +59,7 @@ public class AuthService {
             try {
                 flag = userDAO.isEntityById(login);
             } catch (DaoException e) {
-                throw new LoginException();
+                throw new LogicException(e);
             }
         } catch (SQLException e) {
             e.printStackTrace();

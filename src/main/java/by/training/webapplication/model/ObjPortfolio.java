@@ -59,6 +59,10 @@ public class ObjPortfolio {
         objPhoto.add(photo);
     }
 
+    public void setObjPhoto(int index, Photo photo){
+        objPhoto.set(index,photo);
+    }
+
     public boolean isLast() {
         return last;
     }

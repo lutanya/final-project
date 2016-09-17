@@ -1,5 +1,6 @@
 package by.training.webapplication.service.command;
 
+import by.training.webapplication.service.command.manager.MessageManager;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -11,7 +12,7 @@ public class MessageManagerTest {
 
     @Test
     public void getPropertyTest()  {
-        String property = MessageManager.getProperty("message.nullpage");
+        String property = new MessageManager().getProperty("message.nullpage");
         assertNotNull(property);
     }
 

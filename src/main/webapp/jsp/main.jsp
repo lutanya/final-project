@@ -28,11 +28,11 @@
     </div>
     <div class = "transparent">
         <ul class="object">
-            <li><a href="obj1.html"><img src="/images/house.png" alt="Пример объекта №1"></a></li>
-            <li><a href="#"><img src="" alt="Пример объекта №2"></a></li>
-            <li><a href="#"><img src="/images/seeshore.png" alt="Пример объекта №3"></a></li>
+            <li><a href="/controller?command=viewworkinfo&id=${elem.id}&genre=${elem.objGenre}&show=this"><img src="/images/house.png" alt="Пример объекта №1"></a></li>
+            <li><a href="/controller?command=viewworkinfo&id=${elem.id}&genre=${elem.objGenre}&show=this"><img src="" alt="Пример объекта №2"></a></li>
+            <li><a href="/controller?command=viewworkinfo&id=${elem.id}&genre=${elem.objGenre}&show=this"><img src="/images/seeshore.png" alt="Пример объекта №3"></a></li>
         </ul>
-        <p class="openobj"><a href="portfolio.html"><fmt:message key="li.moreworks" bundle="${rb}"></fmt:message></a></p>
+        <p class="openobj"><a href="/controller?command=viewportfolio&i=0"><fmt:message key="li.moreworks" bundle="${rb}"></fmt:message></a></p>
     </div>
 </div>
 <jsp:include page="footer.jsp"></jsp:include>
