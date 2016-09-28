@@ -48,6 +48,11 @@ public enum CommandEnum {
         {
             this.command = new ViewMessageCommand();
         }
+    },
+    ADDINFOBJ{
+        {
+            this.command = new AddInfCommand();
+        }
     };
     ActionCommand command;
     public ActionCommand getCurrentCommand(){

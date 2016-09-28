@@ -2,6 +2,7 @@ package by.training.webapplication.service.command;
 
 import by.training.webapplication.model.ObjPortfolio;
 import by.training.webapplication.service.PortfolioService;
+import by.training.webapplication.service.exception.CommandException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class ViewPortfolioCommand implements ActionCommand{
     private PortfolioService portfolioService;
 
     @Override
-    public String execute(HttpServletRequest request) throws IOException {
+    public String execute(HttpServletRequest request) throws CommandException {
         String page = "/jsp/portfolio.jsp";
         if(request.getSession().getAttribute("obj")==null) {
             List<ObjPortfolio> objOfPortfolio = getPortfolioService().outputAllObj();
@@ -60,7 +61,7 @@ public class ViewPortfolioCommand implements ActionCommand{
         return page;
     }
 
-    public PortfolioService getPortfolioService() {
+    private PortfolioService getPortfolioService() {
         if (portfolioService == null) {
             portfolioService = new PortfolioService();
         }

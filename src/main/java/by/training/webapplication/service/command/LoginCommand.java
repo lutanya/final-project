@@ -61,14 +61,14 @@ public class LoginCommand implements ActionCommand {
         return page;
     }
 
-    public AuthService getAuthService() {
+    private AuthService getAuthService() {
         if (authService == null) {
             authService = new AuthService();
         }
         return authService;
     }
 
-    public MessageManager getMessageManager() {
+    private MessageManager getMessageManager() {
         if (messageManager == null){
             messageManager = new MessageManager();
         }

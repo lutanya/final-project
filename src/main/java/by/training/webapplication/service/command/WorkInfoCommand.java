@@ -1,6 +1,7 @@
 package by.training.webapplication.service.command;
 
 import by.training.webapplication.model.ObjPortfolio;
+import by.training.webapplication.service.exception.CommandException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class WorkInfoCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request) throws IOException {
+    public String execute(HttpServletRequest request) throws CommandException {
         boolean exit = false;
         String page = "/jsp/worksinfo.jsp";
         int id = Integer.parseInt(request.getParameter("id"));

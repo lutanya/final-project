@@ -126,7 +126,7 @@ public class Validator {
         return flag;
     }
 
-    public MessageManager getMessageManager() {
+    private MessageManager getMessageManager() {
         if( messageManager == null){
             messageManager = new MessageManager();
         }

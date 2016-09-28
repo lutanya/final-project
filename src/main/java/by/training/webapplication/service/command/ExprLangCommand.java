@@ -11,20 +11,20 @@ public class ExprLangCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request) {
         String page = null;
-
-            Enumeration<String> n = request.getHeaderNames();
-                    while(n.hasMoreElements()){
-                        String name = n.nextElement();
-                        String value = request.getHeader(name);
-                        System.out.println(name + ": " + value);
-
-            }
+//
+//            Enumeration<String> n = request.getHeaderNames();
+//                    while(n.hasMoreElements()){
+//                        String name = n.nextElement();
+//                        String value = request.getHeader(name);
+//                        System.out.println(name + ": " + value);
+//
+//            }
 //        try {
 //            page = new URL(command.getHeader("referer")).getPath();
 //        } catch (MalformedURLException e) {
 //            e.printStackTrace();
 //        }
-        System.out.println(page);
+//        System.out.println(page);
 
         request.getSession().setAttribute("local",request.getParameter("local"));
 

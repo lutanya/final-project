@@ -91,7 +91,7 @@ public class DBPoolConnection {
     public void closeDBPoolConection() {
         for (int i = 0; i < MAX_CONNECTIONS; i++) {
             try {
-                connections.take().close();
+                connections.take().close();//kjhkjkjhklhkjhlk
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {

@@ -6,8 +6,8 @@ import by.training.webapplication.database.exception.DaoException;
 import by.training.webapplication.model.User;
 import by.training.webapplication.service.exception.LogicException;
 import by.training.webapplication.util.MD5;
+import static by.training.webapplication.service.command.ActionFactory.logger;
 
-import javax.security.auth.login.LoginException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,10 +29,10 @@ public class AuthService {
                 User user = userDAO.findEntityById(enterLogin);
 
                 if (user.getLogin() != null && user.getPassword().equals(md5.getHash(enterPass))) {
-                    System.out.println("Enter to system");
+                    logger.debug("Enter to system");
                     return true;
                 } else {
-                    System.out.println("Wrong password");
+                    logger.debug("Wrong password");
                 }
             } catch (DaoException e) {
                 throw new LogicException(e);
@@ -40,9 +40,9 @@ public class AuthService {
                 e.printStackTrace();
             }finally {
                 if(cn != null){
-                    try {
-                        DBPoolConnection.initConnectionPool().putConnection(cn);
+                    try { DBPoolConnection.initConnectionPool().putConnection(cn);
                     } catch (SQLException e) {
+
                         e.printStackTrace();
                     }
                 }
@@ -85,10 +85,10 @@ public class AuthService {
             if (user.getLogin() == null) {
                 entity.setPassword(md5.getHash(entity.getPassword()));
                 if (userDAO.create(entity)) {
-                    System.out.println("Save user");
+                    logger.debug("Save user");
                     flag = true;
                 } else {
-                    System.out.println("Wrong password");
+                    logger.debug("Wrong password");
 
                 }
             }

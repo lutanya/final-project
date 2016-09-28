@@ -1,6 +1,7 @@
 package by.training.webapplication.service.command;
 
 import by.training.webapplication.service.QuestionService;
+import by.training.webapplication.service.exception.CommandException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -11,13 +12,13 @@ import java.io.IOException;
 public class ViewMessageCommand implements ActionCommand {
     private QuestionService questionService;
     @Override
-    public String execute(HttpServletRequest request) throws IOException {
+    public String execute(HttpServletRequest request) throws CommandException {
         String page = "/jsp/personalareaadmin.jsp";
         request.setAttribute("msglist",getQuestionService().getListOfMessages());
         return page;
     }
 
-    public QuestionService getQuestionService() {
+    private QuestionService getQuestionService() {
         if(questionService == null){
             questionService = new QuestionService();
         }

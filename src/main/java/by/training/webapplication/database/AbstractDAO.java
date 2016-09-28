@@ -19,7 +19,6 @@ public abstract class AbstractDAO<K, T> {
     }
     public abstract List<T> findAll() throws DaoException;
     public abstract T findEntityById(K id) throws DaoException;
-    //public abstract boolean delete(K id);
     public abstract boolean delete(T entity);
     public abstract boolean create(T entity) throws DaoException;
     public abstract boolean isEntityById(K id) throws DaoException;
@@ -29,10 +28,8 @@ public abstract class AbstractDAO<K, T> {
             try {
                 st.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Statement isn't create!");
             }
-        }else{
-            logger.error("Statement isn't create!");
         }
     }
 

@@ -3,6 +3,7 @@ package by.training.webapplication.service.command;
 import by.training.webapplication.mail.MailThread;
 import by.training.webapplication.model.Question;
 import by.training.webapplication.service.QuestionService;
+import by.training.webapplication.service.exception.CommandException;
 
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletContext;
@@ -19,11 +20,15 @@ public class MailToCommand implements ActionCommand {
     private Question question = new Question();
 
     @Override
-    public String execute(HttpServletRequest request) throws IOException {
+    public String execute(HttpServletRequest request) throws CommandException {
        Properties properties = new Properties();
         ServletContext context = request.getServletContext();
         String filename = context.getInitParameter("mail");
-        properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+        try {
+            properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+        } catch (IOException e) {
+            throw new CommandException(e);
+        }
 
         question.setQuestionerName(request.getParameter("questionername"));
         question.setBackEmail(request.getParameter("backmail"));
@@ -34,7 +39,7 @@ public class MailToCommand implements ActionCommand {
         return null;
     }
 
-    public QuestionService getQuestionService() {
+    private QuestionService getQuestionService() {
         if( questionService == null){
             questionService = new QuestionService();
         }

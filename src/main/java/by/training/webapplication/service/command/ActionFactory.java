@@ -1,10 +1,8 @@
 package by.training.webapplication.service.command;
 
 import by.training.webapplication.service.command.manager.MessageManager;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,10 +10,8 @@ import javax.servlet.http.HttpServletRequest;
  * Created by Tanya on 20.07.2016.
  */
 public class ActionFactory {
-static {
-    PropertyConfigurator.configure("application.properties");
-}
-    public static final Logger logger = Logger.getLogger(ActionFactory.class);
+
+    public static final Logger logger = LogManager.getLogger();
 
     private MessageManager messageManager;
 
@@ -35,7 +31,7 @@ static {
         return current;
     }
 
-    public MessageManager getMessageManager() {
+    private MessageManager getMessageManager() {
         if (messageManager == null){
             messageManager = new MessageManager();
         }
