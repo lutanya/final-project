@@ -51,9 +51,11 @@ public class OrderDAO extends AbstractDAO<String, Order> {
     }
 
     @Override
-    public boolean delete(Order entity) {
+    public boolean delete(String entity) {
         return false;
     }
+
+
 
     @Override
     public boolean create(Order entity) {

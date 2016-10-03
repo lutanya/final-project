@@ -19,7 +19,7 @@ public abstract class AbstractDAO<K, T> {
     }
     public abstract List<T> findAll() throws DaoException;
     public abstract T findEntityById(K id) throws DaoException;
-    public abstract boolean delete(T entity);
+    public abstract boolean delete(K entity) throws DaoException;
     public abstract boolean create(T entity) throws DaoException;
     public abstract boolean isEntityById(K id) throws DaoException;
     public abstract T update(T entity);

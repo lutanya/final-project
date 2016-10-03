@@ -18,6 +18,13 @@ public class WorkInfoCommand implements ActionCommand {
         String page = "/jsp/worksinfo.jsp";
         int id = Integer.parseInt(request.getParameter("id"));
         String genre = request.getParameter("genre");
+        if(request.getSession().getAttribute("local").equals("ru_RU")||request.getSession().getAttribute("local")==null){
+            request.getSession().setAttribute("localRu",true);
+            request.getSession().setAttribute("localEn",false);
+        }else{
+            request.getSession().setAttribute("localEn",true);
+            request.getSession().setAttribute("localRu",false);
+        }
         int i = -1;
 
         if (request.getSession().getAttribute("worksByGenre") == null) {

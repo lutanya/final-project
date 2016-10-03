@@ -11,6 +11,9 @@ public class ObjPortfolio {
     private String objName;
     private String objGenre;
     private String objInfo;
+    private String objNameEn;
+    private String objGenreEn;
+    private String objInfoEn;
     private List<Photo> objPhoto = new ArrayList<>();
     private boolean last;
     private boolean first;
@@ -77,5 +80,29 @@ public class ObjPortfolio {
 
     public void setFirst(boolean first) {
         this.first = first;
+    }
+
+    public String getObjNameEn() {
+        return objNameEn;
+    }
+
+    public void setObjNameEn(String objNameEn) {
+        this.objNameEn = objNameEn;
+    }
+
+    public String getObjGenreEn() {
+        return objGenreEn;
+    }
+
+    public void setObjGenreEn(String objGenreEn) {
+        this.objGenreEn = objGenreEn;
+    }
+
+    public String getObjInfoEn() {
+        return objInfoEn;
+    }
+
+    public void setObjInfoEn(String objInfoEn) {
+        this.objInfoEn = objInfoEn;
     }
 }

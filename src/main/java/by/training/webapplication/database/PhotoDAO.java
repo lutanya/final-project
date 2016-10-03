@@ -55,9 +55,11 @@ public class PhotoDAO extends AbstractDAO<Integer, Photo> {
     }
 
     @Override
-    public boolean delete(Photo entity) {
+    public boolean delete(Integer entity) {
         return false;
     }
+
+
 
     @Override
     public boolean create(Photo entity) {

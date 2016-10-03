@@ -49,9 +49,9 @@ public enum CommandEnum {
             this.command = new ViewMessageCommand();
         }
     },
-    ADDINFOBJ{
+    EDITINGPORTFOLIO{
         {
-            this.command = new AddInfCommand();
+            this.command = new EditingPortfCommand();
         }
     };
     ActionCommand command;

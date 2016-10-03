@@ -5,6 +5,7 @@ import by.training.webapplication.service.AuthService;
 import by.training.webapplication.service.command.manager.ConfigurationManager;
 import by.training.webapplication.web.validator.Validator;
 
+import static by.training.webapplication.service.command.ActionFactory.logger;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -37,7 +38,7 @@ public class RegCommand implements ActionCommand {
         request.getSession().setAttribute("user",user);
         if(Validator.RegValid(request, user)) {
             if (new AuthService().isUserRegistered(user)) {
-                System.out.println("Good registr");
+                logger.info("Good registration");
                 request.getSession().setAttribute("username", user.getName());
                 request.getSession().setAttribute("userlastname", user.getLastname());
                 page = ConfigurationManager.getProperty("path.page.sucsreg");

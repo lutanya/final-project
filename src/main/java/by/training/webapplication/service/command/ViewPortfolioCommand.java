@@ -19,45 +19,57 @@ public class ViewPortfolioCommand implements ActionCommand{
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
         String page = "/jsp/portfolio.jsp";
+        if(request.getSession().getAttribute("local")==null){
+            request.getSession().setAttribute("localRu",true);
+            request.getSession().setAttribute("localEn",false);
+        }else if(request.getSession().getAttribute("local").equals("ru_RU")){
+            request.getSession().setAttribute("localRu",true);
+            request.getSession().setAttribute("localEn",false);
+        }else{
+            request.getSession().setAttribute("localEn",true);
+            request.getSession().setAttribute("localRu",false);
+        }
         if(request.getSession().getAttribute("obj")==null) {
             List<ObjPortfolio> objOfPortfolio = getPortfolioService().outputAllObj();
             request.getSession().setAttribute("obj", objOfPortfolio);
-            if(objOfPortfolio.size()%3==0) {
-                request.getSession().setAttribute("delimCount", objOfPortfolio.size() / 3);
-            }else{
-                request.getSession().setAttribute("delimCount", objOfPortfolio.size() / 3 + 1);
-            }
-        }else if(request.getParameter("transit")==null){
+            request.getSession().setAttribute("objbygenre", "");
+            page="/jsp/main.jsp";
+            setCountPages(objOfPortfolio.size(),request);
+        }else {
 
-            List<ObjPortfolio> lst = (List<ObjPortfolio>) request.getSession().getAttribute("obj");
-            List<ObjPortfolio> lstTypeObj = new ArrayList<>();
-            String genreType = request.getParameter("type");
-            if(genreType!=null){
-                request.getSession().setAttribute("type", genreType);
-                for (ObjPortfolio o:lst) {
-                    if(o.getObjGenre().equals(request.getParameter("type"))){
-                        lstTypeObj.add(o);
+if(request.getParameter("start")!=null){
+    page = "/jsp/main.jsp";
+}
+            if (request.getParameter("transit") == null) {
+                List<ObjPortfolio> lst = (List<ObjPortfolio>) request.getSession().getAttribute("obj");
+                List<ObjPortfolio> lstTypeObj = new ArrayList<>();
+                String genreType = request.getParameter("type");
+                if (genreType != null) {
+                    request.getSession().setAttribute("type", genreType);
+                    for (ObjPortfolio o : lst) {
+                        if (o.getObjGenre().equals(request.getParameter("type"))) {
+                            lstTypeObj.add(o);
 
+                        }
                     }
-                }
-                request.getSession().setAttribute("objbygenre", lstTypeObj);
+                    lstTypeObj.get(0).setFirst(true);
+                    lstTypeObj.get(lstTypeObj.size() - 1).setLast(true);
+                    request.getSession().setAttribute("objbygenre", lstTypeObj);
+                    setCountPages(lstTypeObj.size(), request);
+                } else {
+                    request.getSession().setAttribute("type", "");
+                    setCountPages(lst.size(), request);
 
-                if(lstTypeObj.size()%3==0) {
-                    request.getSession().setAttribute("delimCount", lstTypeObj.size() / 3);
-                }else{
-                    request.getSession().setAttribute("delimCount", lstTypeObj.size() / 3 + 1);
-                }
-            }else
-            {
-                request.getSession().setAttribute("type", "");
-                if(lst.size()%3==0) {
-                    request.getSession().setAttribute("delimCount", lst.size() / 3);
-                }else{
-                    request.getSession().setAttribute("delimCount", lst.size() / 3 + 1);
                 }
             }
         }
-        request.getSession().setAttribute("i", request.getParameter("i"));
+       if(request.getParameter("all")!=null){
+            request.getSession().setAttribute("objbygenre", "");}
+
+        int i = Integer.parseInt(request.getParameter("i"));
+        request.getSession().setAttribute("i", i);
+        request.getSession().setAttribute("numberofpage", (int)(i+3)/3);
+
         return page;
     }
 
@@ -66,5 +78,13 @@ public class ViewPortfolioCommand implements ActionCommand{
             portfolioService = new PortfolioService();
         }
         return portfolioService;
+    }
+
+    private void setCountPages(int listSize,HttpServletRequest request){
+        if(listSize%3==0) {
+            request.getSession().setAttribute("delimCount", listSize / 3);
+        }else{
+            request.getSession().setAttribute("delimCount", listSize / 3 + 1);
+        }
     }
 }

@@ -5,6 +5,7 @@ import by.training.webapplication.model.ObjPortfolio;
 import by.training.webapplication.model.Photo;
 import static by.training.webapplication.service.command.ActionFactory.logger;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,13 +18,17 @@ import java.util.List;
  */
 public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
     private final static String SQL_SELECT_OBJECT_INFO =
-            "SELECT idPortfolio_obj, object_name, object_info, object_genre\n" +
+            "SELECT idPortfolio_obj, object_name, object_info, object_genre,object_name_en,object_genre_en,object_info_en\n" +
                     "FROM portfolio WHERE object_genre IN \n" +
                     "(SELECT genre FROM object_types WHERE `type` = \"obj\")";
+
     private final static String SQL_SELECT_PHOTO =
             "SELECT portfolio_obj_id, foto_url, foto_info\n" +
                     "FROM foto_obj WHERE portfolio_obj_id=?";
-
+    private final static String SQL_DELETE_OBJECT = "DELETE FROM portfolio WHERE idPortfolio_obj=?";
+    private final static String SQL_CREATE_OBJECT = "INSERT INTO portfolio(object_name,object_genre,object_info) VALUES(?,?,?)";
+    private final static String SQL_INSERT_PHOTO = "INSERT INTO foto_obj(portfolio_obj_id, foto_url) VALUES(?, ?)";
+    private final static String SQL_SELECT_ID ="SELECT MAX(idPortfolio_obj) AS maxid FROM portfolio";
 
     public ObjectDAO(Connection connection) {
         super(connection);
@@ -45,16 +50,18 @@ public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
             ResultSet resultSet = st.executeQuery();
             ResultSet resultSetForPhoto;
             ObjPortfolio o;
-            Photo ph;
+            Photo ph = new Photo();
             int i;
             while (resultSet.next()) {
                 o = new ObjPortfolio();
-                ph = new Photo();
 
                 o.setId(resultSet.getInt("idPortfolio_obj"));
                 o.setObjName(resultSet.getString("object_name"));
                 o.setObjInfo(resultSet.getString("object_info"));
                 o.setObjGenre(resultSet.getString("object_genre"));
+                o.setObjNameEn(resultSet.getString("object_name_en"));
+                o.setObjInfoEn(resultSet.getString("object_info_en"));
+                o.setObjGenreEn(resultSet.getString("object_genre_en"));
 
                 stForPhoto = null;
                 try {
@@ -63,8 +70,9 @@ public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
 
                     resultSetForPhoto = stForPhoto.executeQuery();
                     i = 0;
-                    while (resultSetForPhoto.next()) {
 
+                    while (resultSetForPhoto.next()) {
+                        ph = new Photo();
                         if (i == 0) {
                             ph.setFirst(true);
                         }
@@ -73,10 +81,11 @@ public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
                             ph.setFotoInfo(resultSetForPhoto.getString("foto_info"));
                         o.addObjPhoto(ph);
                         i++;
+
                     }
                     if (i > 0) {
                         ph.setLast(true);
-                        o.setObjPhoto(i - 1, ph);
+                        //o.setObjPhoto(i - 1, ph);
                     }
                     listOfObj.add(o);
                 }finally {
@@ -96,15 +105,59 @@ public class ObjectDAO extends AbstractDAO<String, ObjPortfolio> {
         return null;
     }
 
-
     @Override
-    public boolean delete(ObjPortfolio entity) {
-        return false;
+    public boolean delete(String entity) throws DaoException {
+        PreparedStatement st = null;
+
+        try{
+            st = connection.prepareStatement(SQL_DELETE_OBJECT);
+            st.setString(1, entity);
+            st.executeUpdate();
+            return true;
+        }catch (SQLException e){
+            throw new DaoException(e);
+        }
+
     }
 
     @Override
-    public boolean create(ObjPortfolio entity) {
-        return false;
+    public boolean create(ObjPortfolio entity) throws DaoException {
+        PreparedStatement ps = null;
+        PreparedStatement st = null;
+        PreparedStatement psForPhoto = null;
+        try {
+
+            ps = connection.prepareStatement(SQL_CREATE_OBJECT);
+            ps.setString(1,entity.getObjName());
+            ps.setString(2,entity.getObjGenre());
+            ps.setString(3,entity.getObjInfo());
+            ps.executeUpdate();
+            st = connection.prepareStatement(SQL_SELECT_ID);
+            ResultSet resultSet = st.executeQuery();
+            resultSet.next();
+            int id = resultSet.getInt("maxid");
+            for(Photo photo: entity.getObjPhoto()){
+                try {
+                    psForPhoto = connection.prepareStatement(SQL_INSERT_PHOTO);
+                    psForPhoto.setInt(1,id);
+                    psForPhoto.setString(2, photo.getFotoUrl());
+                    psForPhoto.executeUpdate();
+                }finally {
+                    closeSt(psForPhoto);
+                }
+            }
+
+            return true;
+
+
+        } catch (SQLException e) {
+            throw new DaoException(e);
+
+        }finally {
+
+            closeSt(ps);
+        }
+
     }
 
     @Override

@@ -61,9 +61,11 @@ public class QuestionDAO extends  AbstractDAO<String, Question> {
     }
 
     @Override
-    public boolean delete(Question entity) {
+    public boolean delete(String entity) {
         return false;
     }
+
+
 
     @Override
     public boolean create(Question entity) throws DaoException {

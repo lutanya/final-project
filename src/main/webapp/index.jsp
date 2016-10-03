@@ -16,7 +16,7 @@
   <body>
 
 
-  <jsp:forward page="jsp/main.jsp"/>
+  <jsp:forward page="/controller?command=viewportfolio&i=0&start=true"/>
 
   </body>
 </html>

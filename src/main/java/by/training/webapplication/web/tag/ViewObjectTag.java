@@ -23,10 +23,10 @@ public class ViewObjectTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {
         int k = 0;
-        for (int i = 1; i <= blockCount; i++) {
+        for (int j = 1; j <= blockCount; j++) {
             try {
-
-                pageContext.getOut().write("<a href=\"/controller?command=viewportfolio&i=" + k + "&transit=false\"/><input type=\"submit\" value=\"" + i + "\">");
+                pageContext.getOut().write("<a href=\"/controller?command=viewportfolio&i=" + k + "&transit=false\"/>" +
+                        "<input type=\"submit\" value=\"" + j + "\">");
                 k+=3;
 
             } catch (IOException e) {

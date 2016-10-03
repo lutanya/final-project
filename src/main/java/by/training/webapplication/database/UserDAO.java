@@ -34,7 +34,6 @@ public class UserDAO extends AbstractDAO<String, User>{
             st.setString(1, id);
             System.out.println(id);
             ResultSet resultSet = st.executeQuery();
-
             if(resultSet.next()) {
                 System.out.println(resultSet.getString("password") + resultSet.getString("login"));
                 user.setPassword(resultSet.getString("password"));
@@ -51,11 +50,12 @@ public class UserDAO extends AbstractDAO<String, User>{
         return user;
     }
 
-
     @Override
-    public boolean delete(User entity) {
+    public boolean delete(String entity) {
         return false;
     }
+
+
 
     @Override
     public boolean create(User entity) {

@@ -28,9 +28,9 @@
     </div>
     <div class = "transparent">
         <ul class="object">
-            <li><a href="/controller?command=viewworkinfo&id=${elem.id}&genre=${elem.objGenre}&show=this"><img src="/images/house.png" alt="Пример объекта №1"></a></li>
-            <li><a href="/controller?command=viewworkinfo&id=${elem.id}&genre=${elem.objGenre}&show=this"><img src="" alt="Пример объекта №2"></a></li>
-            <li><a href="/controller?command=viewworkinfo&id=${elem.id}&genre=${elem.objGenre}&show=this"><img src="/images/seeshore.png" alt="Пример объекта №3"></a></li>
+            <li><a href="/controller?command=viewworkinfo&id=1&genre=Жилые интерьеры&show=this"><img src="/images/decor.png" alt="Пример объекта №1"></a></li>
+            <li><a href="/controller?command=viewworkinfo&id=2&genre=Жилые интерьеры&show=this"><img src="/images/seeshore.png" alt="Пример объекта №2"></a></li>
+            <li><a href="/controller?command=viewworkinfo&id=3&genre=Архитектура&show=this"><img src="/images/seeshore.png" alt="Пример объекта №3"></a></li>
         </ul>
         <p class="openobj"><a href="/controller?command=viewportfolio&i=0"><fmt:message key="li.moreworks" bundle="${rb}"></fmt:message></a></p>
     </div>
