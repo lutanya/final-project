@@ -5,12 +5,13 @@ import by.training.webapplication.model.Photo;
 
 import by.training.webapplication.service.ObjectService;
 
+import by.training.webapplication.service.command.manager.ConfigurationManager;
+import by.training.webapplication.service.command.manager.MessageManager;
 import by.training.webapplication.service.exception.CommandException;
 import by.training.webapplication.service.exception.LogicException;
 
-import static by.training.webapplication.service.command.ActionFactory.logger;
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 
-import javax.mail.Session;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,10 +20,7 @@ import java.io.*;
 
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -32,8 +30,10 @@ public class EditingPortfCommand implements ActionCommand {
     private static final String PARAM_NAME_OBJECT = "nm";
     private static final String PARAM_GENRE_OBJECT = "genre";
     private static final String PARAM_OBJECT_INFO = "description";
+    private static final String PARAM_EN_NAME_OBJECT = "ennm";
+    private static final String PARAM_OBJECT_EN_INFO = "endescription";
     private ObjectService objectService;
-
+    private MessageManager messageManager;
 
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
@@ -48,13 +48,11 @@ public class EditingPortfCommand implements ActionCommand {
                 request.setAttribute("remove", true);
                 if (request.getParameterValues("obj[]") != null) {
                     String[] removeObjects = request.getParameterValues("obj[]");
-
                     int delim;
                     for (String elem : removeObjects) {
                         try {
                             List<Photo> photos;
                             if(getObjectService().removeObj(elem)) {
-
                                 //int delimCurrent = (Integer) request.getSession().getAttribute("i");
                                 ServletContext context = request.getSession().getServletContext();
                                 String realContextPath = context.getRealPath(request.getContextPath());
@@ -65,11 +63,17 @@ public class EditingPortfCommand implements ActionCommand {
                                         if (lst.get(i).isLast() && i != 0) lst.get(i - 1).setLast(true);
                                         photos=lst.get(i).getObjPhoto();
                                         for(int j = 0; j<photos.size();j++){
-
                                             new File(realContextPath + photos.get(j).getFotoUrl()).delete();
                                         }
                                         lst.remove(i);
                                     }
+                                    String local;
+                                    if(request.getSession().getAttribute("local")==null){
+                                        local ="ru_RU";
+                                    }else{
+                                        local = (String ) request.getSession().getAttribute("local");
+                                    }
+                                    request.setAttribute("suscsesfullremoveobj",getMessageManager().getProperty("message.removeobj",local));
                                 }
                                 if (genreType != null) {
                                     for (int i = 0; i < genreType.size(); i++) {
@@ -80,13 +84,10 @@ public class EditingPortfCommand implements ActionCommand {
                                 }
                             }
                         } catch (LogicException e) {
-                            logger.error(e);
+                            LOGGER.error(e);
+                            throw new CommandException(e);
                         }
                     }
-
-
-
-
                     if (!genreType.isEmpty()){
                                 if (genreType.size() % 3 == 0) {
                                     request.getSession().setAttribute("delimCount", genreType.size() / 3);
@@ -95,11 +96,6 @@ public class EditingPortfCommand implements ActionCommand {
                                     delim = genreType.size() / 3 + 1;
                                     request.getSession().setAttribute("delimCount", genreType.size() / 3 + 1);
                                 }
-
-
-
-
-
                         }else{
                         if (lst.size() % 3 == 0) {
                             request.getSession().setAttribute("delimCount", lst.size() / 3);
@@ -108,7 +104,6 @@ public class EditingPortfCommand implements ActionCommand {
                             request.getSession().setAttribute("delimCount", lst.size() / 3 + 1);
                             delim = lst.size() / 3 + 1;
                         }
-
                     }
                     if(request.getSession().getAttribute("numberofpage").equals(delim+1)){
                         request.getSession().setAttribute("i",(delim-1)*3);
@@ -117,7 +112,7 @@ public class EditingPortfCommand implements ActionCommand {
                     request.getSession().setAttribute("obj", lst);
                     }
 
-                page = "/jsp/portfolio.jsp";
+                page = ConfigurationManager.getProperty("path.page.portfolio");
                 break;
             }
             case "add": {
@@ -126,6 +121,8 @@ public class EditingPortfCommand implements ActionCommand {
                 obj.setObjName(request.getParameter(PARAM_NAME_OBJECT));
                 obj.setObjGenre(request.getParameter(PARAM_GENRE_OBJECT));
                 obj.setObjInfo(request.getParameter(PARAM_OBJECT_INFO));
+                obj.setObjNameEn(request.getParameter(PARAM_EN_NAME_OBJECT));
+                obj.setObjInfoEn(request.getParameter(PARAM_OBJECT_EN_INFO));
                 try {
                     //проверка пришел ли запрос в multipart формате
                     if (isMultipartFormat(request)) {
@@ -141,8 +138,6 @@ public class EditingPortfCommand implements ActionCommand {
                                                         .replace("\"", "");
                                             }
                                         }
-
-
                                         if (!fileName.isEmpty()) {
                                             photo = new Photo();
                                             ServletContext context = request.getSession().getServletContext();
@@ -154,21 +149,19 @@ public class EditingPortfCommand implements ActionCommand {
                                                 photo.setFotoUrl("/images/" + fileName);
                                                 obj.addObjPhoto(photo);
                                             }
-
-
-
                                         }
                                     }
                                 }
                             } catch (IOException | ServletException e) {
-                                e.printStackTrace();
+                                LOGGER.error(e);
+                                throw new CommandException(e);
                             }
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println(e.toString());
+                    LOGGER.error(e);
+                    throw new CommandException(e);
                 }
-
                 try {
                     if(getObjectService().addObject(obj)){
                         request.setAttribute("addObj","true");
@@ -176,21 +169,98 @@ public class EditingPortfCommand implements ActionCommand {
                         request.getSession().setAttribute("obj", lst);
                         request.setAttribute("work", obj);
                     }
-
                 } catch (LogicException e) {
-                    logger.error(e);
+                    LOGGER.error(e);
+                    throw new CommandException(e);
                 }
-                page = "/jsp/addnewobj.jsp";
+                page = ConfigurationManager.getProperty("path.page.addnewobj");
                 break;
             }
             case "edit":{
                 request.setAttribute("edit", true);
-                if (request.getParameter("objectoedit") != null) {
-                    request.setAttribute("workedit",request.getParameter("objectoedit"));
-                    page = "/jsp/addnewobj.jsp";
+                if (request.getParameter("idobjectoedit") != null) {
+                    String idStr = request.getParameter("idobjectoedit");
+                    request.getSession().setAttribute("id",idStr);
+                    ObjPortfolio workedit = new ObjPortfolio();
+                    for(ObjPortfolio object: lst){
+                        if(object.getId() == Integer.parseInt(idStr)){
+                            workedit = object;
+                            break;
+                        }
+                    }
+                    request.setAttribute("workedit",workedit);
+                    page = ConfigurationManager.getProperty("path.page.addnewobj");
                 }else {
-                    page = "/jsp/portfolio.jsp";
+                    page = ConfigurationManager.getProperty("path.page.portfolio");
                 }
+                break;
+            }
+            case "update":{
+                ObjPortfolio obj = new ObjPortfolio();
+                Photo photo;
+                obj.setId(Integer.parseInt((String)request.getSession().getAttribute("id")));
+                obj.setObjName(request.getParameter(PARAM_NAME_OBJECT));
+                obj.setObjGenre(request.getParameter(PARAM_GENRE_OBJECT));
+                obj.setObjInfo(request.getParameter(PARAM_OBJECT_INFO));
+                obj.setObjNameEn(request.getParameter(PARAM_EN_NAME_OBJECT));
+                obj.setObjInfoEn(request.getParameter(PARAM_OBJECT_EN_INFO));
+                try {
+                    //проверка пришел ли запрос в multipart формате
+                    if (isMultipartFormat(request)) {
+                        String fileName = "";
+                        String tempFile = "";
+                        if ("POST".equalsIgnoreCase(request.getMethod())) {
+                            try {
+                                for (Part part : request.getParts()) {
+                                    if (part.getName().equals("photo[]")) {
+                                        for (String cd : part.getHeader("content-disposition").split(";")) {
+                                            if (cd.trim().startsWith("filename")) {
+                                                fileName = cd.substring(cd.indexOf('=') + 1).trim()
+                                                        .replace("\"", "");
+                                            }
+                                        }
+                                        if (!fileName.isEmpty()) {
+                                            photo = new Photo();
+                                            ServletContext context = request.getSession().getServletContext();
+                                            String realContextPath = context.getRealPath(request.getContextPath());
+                                            tempFile = realContextPath + "images/" + fileName;
+                                            File file = new File(tempFile);
+                                            try (InputStream input = part.getInputStream()) {
+                                                Files.copy(input, file.toPath());
+                                                photo.setFotoUrl("/images/" + fileName);
+                                                obj.addObjPhoto(photo);
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (IOException | ServletException e) {
+                                LOGGER.error(e);
+                                throw new CommandException(e);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.error(e);
+                    throw new CommandException(e);
+                }
+                try {
+                    if(getObjectService().updateObject(obj)){
+                        request.setAttribute("update","true");
+                        for(int i = 0; i < lst.size(); i++) {
+                            if (lst.get(i).getId() == obj.getId()) {
+                                lst.set(i,obj);
+                                break;
+                            }
+                        }
+                        request.getSession().setAttribute("obj", lst);
+
+                        request.setAttribute("work", obj);
+                    }
+                } catch (LogicException e) {
+                    LOGGER.error(e);
+                    throw new CommandException(e);
+                }
+                page = ConfigurationManager.getProperty("path.page.addnewobj");
                 break;
             }
         }
@@ -206,7 +276,6 @@ public class EditingPortfCommand implements ActionCommand {
 
     //функция, сохраняющая пришедший файл на диск
     private void saveFile(String tempFile, HttpServletRequest request) {
-
         try {
             FileInputStream fin = new FileInputStream(tempFile);
             FileOutputStream fos = new FileOutputStream(request.getContextPath() + "/images/" + request.getParameter(PARAM_NAME_OBJECT));
@@ -225,6 +294,13 @@ public class EditingPortfCommand implements ActionCommand {
             objectService = new ObjectService();
         }
         return objectService;
+    }
+
+    public MessageManager getMessageManager() {
+        if (messageManager == null) {
+            messageManager = new MessageManager();
+        }
+        return messageManager;
     }
 
 }

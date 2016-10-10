@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import static by.training.webapplication.service.command.ActionFactory.logger;
 
 /**
  * Created by Tanya on 06.09.2016.
@@ -72,8 +71,8 @@ public class PhotoDAO extends AbstractDAO<Integer, Photo> {
     }
 
     @Override
-    public Photo update(Photo entity) {
-        return null;
+    public boolean update(Photo entity) {
+        return false;
     }
 
 }

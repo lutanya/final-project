@@ -31,7 +31,13 @@
         <a href="/jsp/login.jsp"><fmt:message key="header.log" bundle="${rb}"></fmt:message></a>
     </c:if>
 <c:if test="${username != null}">
-    <a href="/jsp/personalareaadmin.jsp"><fmt:message key="header.office" bundle="${rb}"></fmt:message></a>|
+    <c:if test="${admin}">
+    <a href="/controller?command=viewmessage"><fmt:message key="header.office" bundle="${rb}"></fmt:message></a>
+    </c:if>
+    <c:if test="${not admin}">
+        <a href="/jsp/perronalarea.jsp"><fmt:message key="header.office" bundle="${rb}"></fmt:message></a>
+    </c:if>
+    |
     <a href="/controller?command=logout"><fmt:message key="header.logout" bundle="${rb}"></fmt:message></a>
 </c:if>
 </p>

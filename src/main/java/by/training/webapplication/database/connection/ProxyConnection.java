@@ -61,6 +61,10 @@ public class ProxyConnection implements Connection{
         DBPoolConnection.initConnectionPool().putConnection(connection);
     }
 
+    public void closeProxyConnection() throws SQLException {
+        connection.close();
+    }
+
     @Override
     public boolean isClosed() throws SQLException {
         return connection.isClosed();

@@ -94,8 +94,23 @@ public class ObjPortfolio {
         return objGenreEn;
     }
 
-    public void setObjGenreEn(String objGenreEn) {
-        this.objGenreEn = objGenreEn;
+    public void setObjGenreEn(String objGenreRu) {
+
+        switch(objGenreRu){
+            case "Жилые интерьеры":{
+                objGenreEn = "Residential interiors";
+                break;
+            }
+            case "Общественные интерьеры":{
+                objGenreEn = "Public interiors";
+                break;
+            }
+            case "Арихитектура":{
+                objGenreEn = "Architecture";
+                break;
+            }
+
+        }
     }
 
     public String getObjInfoEn() {

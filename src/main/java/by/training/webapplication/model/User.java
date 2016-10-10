@@ -7,12 +7,39 @@ public class User {
 
     private String name;
     private String lastname;
+    private String sex;
     private String contry;
     private String city;
     private String mail;
     private String phone;
     private String login;
     private String password;
+    private Order order;
+    private int role;
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
     public String getLogin() {
         return login;

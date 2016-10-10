@@ -3,10 +3,12 @@ package by.training.webapplication.service.command;
 import by.training.webapplication.service.AuthService;
 import by.training.webapplication.service.command.manager.ConfigurationManager;
 import by.training.webapplication.service.command.manager.MessageManager;
+import by.training.webapplication.service.exception.CommandException;
 import by.training.webapplication.service.exception.LogicException;
 
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 
 /**
  * Created by Tanya on 20.07.2016.
@@ -19,23 +21,29 @@ public class LoginCommand implements ActionCommand {
     private AuthService authService;
 
     @Override
-    public String execute(HttpServletRequest request) {
+    public String execute(HttpServletRequest request) throws CommandException {
         String page = null;
-
         String login = request.getParameter(PARAM_NAME_LOGIN);
         String pass = request.getParameter(PARAM_NAME_PASSWORD);
-
         try {
             if (getAuthService().checkLogin(login, pass)) {
                 request.getSession().setAttribute("username", login);
-
+                if(login.equals("admin"))
+                    request.getSession().setAttribute("admin",true);
                 page = ConfigurationManager.getProperty("path.page.main");
             } else {
                 page = ConfigurationManager.getProperty("path.page.login");
-                request.getSession().setAttribute("errorLoginPwdMessage", getMessageManager().getProperty("message.loginpasserror"));
+                String local;
+                if(request.getSession().getAttribute("local")==null){
+                    local ="ru_RU";
+                }else{
+                    local = (String ) request.getSession().getAttribute("local");
+                }
+                request.setAttribute("errorLoginPwdMessage", getMessageManager().getProperty("message.loginpasserror",local));
             }
         } catch (LogicException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
+            throw new CommandException(e);
         }
 
                 /*case 3:

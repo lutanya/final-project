@@ -3,7 +3,7 @@ package by.training.webapplication.mail;
 
 
 
-import static by.training.webapplication.service.command.ActionFactory.logger;
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 
 import javax.mail.*;
 import javax.mail.internet.AddressException;
@@ -21,6 +21,8 @@ public class MailThread extends Thread {
     private String mailText;
     private Properties properties;
 
+    public MailThread(){}
+
     public MailThread(String sendToEmail, String mailSubject, String mailText, Properties properties){
         this.sendToEmail = sendToEmail;
         this.mailSubject = mailSubject;
@@ -33,13 +35,13 @@ public class MailThread extends Thread {
         message = new MimeMessage(mailSession);
         try{
             message.setSubject(mailSubject);
-            message.setContent(mailText,"text/html");
+            message.setContent(mailText,"text/plain; charset=utf-8");
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToEmail));
 
         }catch (AddressException e){
-            logger.error("Некорректный адрес: " + sendToEmail +" " + e);
+            LOGGER.error("Некорректный адрес: " + sendToEmail +" " + e);
         }catch (MessagingException e){
-            logger.error("Ошибка формиования сообщения" + e);
+            LOGGER.error("Ошибка формиования сообщения" + e);
         }
     }
     public void run(){
@@ -47,7 +49,7 @@ public class MailThread extends Thread {
         try{
             Transport.send(message);
         }catch (MessagingException e){
-            logger.error("Ошибка при отправлении сообщения" + e);
+            LOGGER.error("Ошибка при отправлении сообщения" + e);
         }
     }
 }

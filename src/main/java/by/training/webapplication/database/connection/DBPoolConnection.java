@@ -11,6 +11,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
+
 /**
  * Created by Tanya on 24.07.2016.
  */
@@ -28,13 +30,13 @@ public class DBPoolConnection {
             input = getClass().getClassLoader().getResourceAsStream("application.properties");
             prop.load(input);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e);
                 }
             }
         }
@@ -42,7 +44,7 @@ public class DBPoolConnection {
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
         } catch (SQLException e) {
-            System.out.println("DB connection error: " + e);
+            LOGGER.error("DB connection error: " + e);
         }
         String url = prop.getProperty("database.url");
         String password = prop.getProperty("database.password");
@@ -51,7 +53,7 @@ public class DBPoolConnection {
             try {
                 cn = DriverManager.getConnection(url, user, password);
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
             connections.add(new ProxyConnection(cn));
         }
@@ -67,11 +69,10 @@ public class DBPoolConnection {
 
                 }
             } catch (Exception e) {
-
+                LOGGER.error(e);
             } finally {
                 lock.unlock();
             }
-
         }
         return pool;
     }
@@ -80,6 +81,7 @@ public class DBPoolConnection {
         try {
             return connections.take();
         } catch (InterruptedException e) {
+            LOGGER.error(e);
             return null;
         }
     }
@@ -88,14 +90,15 @@ public class DBPoolConnection {
         connections.add(connection);
     }
 
-    public void closeDBPoolConection() {
+    public void closeDBPoolConnection() {
         for (int i = 0; i < MAX_CONNECTIONS; i++) {
             try {
-                connections.take().close();//kjhkjkjhklhkjhlk
+                ProxyConnection cn = (ProxyConnection) connections.take();
+                cn.closeProxyConnection();
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
     }

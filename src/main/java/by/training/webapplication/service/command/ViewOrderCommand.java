@@ -1,25 +1,26 @@
 package by.training.webapplication.service.command;
 
-import by.training.webapplication.service.QuestionService;
+import by.training.webapplication.service.command.ActionFactory;
 import by.training.webapplication.service.command.manager.ConfigurationManager;
 import by.training.webapplication.service.exception.CommandException;
 import by.training.webapplication.service.exception.LogicException;
+import by.training.webapplication.service.util.OrderUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-
 import static by.training.webapplication.service.command.ActionFactory.LOGGER;
-
 /**
- * Created by Tanya on 14.09.2016.
+ * Created by Tanya on 09.10.2016.
  */
-public class ViewMessageCommand implements ActionCommand {
-    private QuestionService questionService;
+public class ViewOrderCommand implements ActionCommand {
+    private OrderUtil orderUtil;
+
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        String page = ConfigurationManager.getProperty("path.page.persaradmin");
+        String page = null;
         try {
-            request.getSession().setAttribute("msglist",getQuestionService().getListOfMessages());
+            request.setAttribute("orders", getOrderUtil().readOrders());
+            request.setAttribute("vieword",true);
+            page = ConfigurationManager.getProperty("path.page.persaradmin");
         } catch (LogicException e) {
             LOGGER.error(e);
             throw new CommandException(e);
@@ -27,10 +28,10 @@ public class ViewMessageCommand implements ActionCommand {
         return page;
     }
 
-    private QuestionService getQuestionService() {
-        if(questionService == null){
-            questionService = new QuestionService();
+    public OrderUtil getOrderUtil(){
+        if(orderUtil==null){
+            orderUtil = new OrderUtil();
         }
-        return questionService;
+        return orderUtil;
     }
 }

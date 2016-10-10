@@ -11,6 +11,17 @@ public class Order {
     private boolean overhaul;
     private float typeOfProject;
     private float priceFoKindOfProject;
+    private String title;
+    private int done;
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getKindOfWork() {
         return kindOfWork;
@@ -66,5 +77,25 @@ public class Order {
 
     public void setPriceFoKindOfProject(float priseFoKindOfProject) {
         this.priceFoKindOfProject = priseFoKindOfProject;
+    }
+
+    public void setStage(float stage) {
+        this.stage = stage;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getDone() {
+        return done;
+    }
+
+    public void setDone(int done) {
+        this.done = done;
     }
 }

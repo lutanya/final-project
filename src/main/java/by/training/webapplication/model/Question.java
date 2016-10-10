@@ -4,10 +4,11 @@ package by.training.webapplication.model;
  * Created by Tanya on 14.09.2016.
  */
 public class Question {
+    private  int questionId;
     private String questionerName;
     private String backEmail;
     private String questionText;
-    private boolean response;
+    private int replied;
 
     public String getQuestionerName() {
         return questionerName;
@@ -33,11 +34,20 @@ public class Question {
         this.questionText = questionText;
     }
 
-    public boolean isResponce() {
-        return response;
+    public int getReplied() {
+        return replied;
+
     }
 
-    public void setResponce(boolean responce) {
-        this.response = responce;
+    public void setReplied(int replied) {
+        this.replied = replied;
+    }
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
     }
 }

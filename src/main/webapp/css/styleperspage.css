@@ -1,0 +1,37 @@
+.msgtbl table {
+    background: #FFFFFF;
+    margin: 20px 0 0 15%;
+    border-collapse: collapse;
+    border: 2px groove #ccc;
+    width: 60%;
+    color: #483D8B;
+}
+.msgtbl th{
+    background: #fff; /* Цвет фона */
+
+}
+.msgtbl td, th {
+
+    text-align: left;
+    background-color: silver;
+}
+.msgtbl tr{
+    border: 2px groove #ccc;
+    height: 30px
+
+}
+.msgtbl tr:hover td{
+    background: #fff;
+}
+.msgtbl a{
+    text-decoration: none;
+    color:#483D8B;
+
+}
+.msgtbl a:hover{
+    text-decoration: none;
+    color: #0066FF;
+}
+#replied {
+    font-weight: bold;
+}

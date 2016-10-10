@@ -1,6 +1,7 @@
 package by.training.webapplication.service.command;
 
 import by.training.webapplication.model.Order;
+import by.training.webapplication.service.command.manager.ConfigurationManager;
 import by.training.webapplication.service.util.OrderUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class CalcAndOrderCommand implements ActionCommand {
 
     @Override
     public String execute(HttpServletRequest request) {
-        String page = "/jsp/services.jsp";
+        String page = ConfigurationManager.getProperty("path.page.services");
         Order order = new Order();
         Enumeration<String> param = request.getParameterNames();
             if(request.getParameter(PARAM_NAME_KIND_OF_WORK) != null && !request.getParameter(PARAM_NAME_OBJECT_SQUARE).isEmpty()){
@@ -55,9 +56,9 @@ public class CalcAndOrderCommand implements ActionCommand {
                     }
                 }
             }
-            OrderUtil.calculate(order);
+            request.setAttribute("cost",OrderUtil.calculate(order));
         }
-
         return page;
     }
+
 }

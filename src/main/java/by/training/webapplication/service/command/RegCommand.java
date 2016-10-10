@@ -3,9 +3,11 @@ package by.training.webapplication.service.command;
 import by.training.webapplication.model.User;
 import by.training.webapplication.service.AuthService;
 import by.training.webapplication.service.command.manager.ConfigurationManager;
+import by.training.webapplication.service.exception.CommandException;
+import by.training.webapplication.service.exception.LogicException;
 import by.training.webapplication.web.validator.Validator;
 
-import static by.training.webapplication.service.command.ActionFactory.logger;
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -23,10 +25,9 @@ public class RegCommand implements ActionCommand {
     private static final String PARAM_NAME_PASSWORD_REPEAT = "pwd2";
 
     @Override
-    public String execute(HttpServletRequest request) {
+    public String execute(HttpServletRequest request) throws CommandException {
         User user = new User();
-        String page = "/jsp/registration.jsp";
-
+        String page = ConfigurationManager.getProperty("path.page.registr");
         user.setName(request.getParameter(PARAM_NAME_USERNAME));
         user.setLastname(request.getParameter(PARAM_NAME_LASTNAME));
         user.setContry(request.getParameter(PARAM_NAME_CONTRY));
@@ -37,13 +38,18 @@ public class RegCommand implements ActionCommand {
         user.setPassword(request.getParameter(PARAM_NAME_PASSWORD));
         request.getSession().setAttribute("user",user);
         if(Validator.RegValid(request, user)) {
-            if (new AuthService().isUserRegistered(user)) {
-                logger.info("Good registration");
-                request.getSession().setAttribute("username", user.getName());
-                request.getSession().setAttribute("userlastname", user.getLastname());
-                page = ConfigurationManager.getProperty("path.page.sucsreg");
-            } else {
-                page = ConfigurationManager.getProperty("path.page.registr");
+            try {
+                if (new AuthService().isUserRegistered(user)) {
+                    LOGGER.info("Good registration");
+                    request.getSession().setAttribute("username", user.getName());
+                    request.getSession().setAttribute("userlastname", user.getLastname());
+                    page = ConfigurationManager.getProperty("path.page.sucsreg");
+                } else {
+                    page = ConfigurationManager.getProperty("path.page.registr");
+                }
+            } catch (LogicException e) {
+                LOGGER.error(e);
+                throw new CommandException(e);
             }
         }
        /* if(command.getParameter(PARAM_NAME_PASSWORD).equals(command.getParameter(PARAM_NAME_PASSWORD_REPEAT))) {

@@ -11,6 +11,7 @@ public class ExprLangCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request) {
         String page = null;
+
 //
 //            Enumeration<String> n = request.getHeaderNames();
 //                    while(n.hasMoreElements()){

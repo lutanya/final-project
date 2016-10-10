@@ -1,14 +1,16 @@
 package by.training.webapplication.util;
 
+import by.training.webapplication.service.exception.LogicException;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 /**
  * Created by Tanya on 24.07.2016.
  */
 public class MD5 {
 
-    public String getHash(String str){
+    public String getHash(String str) throws LogicException {
         MessageDigest md5;
         StringBuffer hexString = new StringBuffer();
         try{
@@ -20,7 +22,8 @@ public class MD5 {
                 hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
             }
         }catch (NoSuchAlgorithmException e){
-            return e.toString();
+            LOGGER.error(e);
+            throw new LogicException(e);
         }
         return hexString.toString();
     }

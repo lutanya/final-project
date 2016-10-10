@@ -1,46 +1,37 @@
 package by.training.webapplication.service;
 
 import by.training.webapplication.database.ObjectDAO;
-import by.training.webapplication.database.UserDAO;
 import by.training.webapplication.database.connection.DBPoolConnection;
 import by.training.webapplication.database.exception.DaoException;
 import by.training.webapplication.model.ObjPortfolio;
-import by.training.webapplication.model.User;
 import by.training.webapplication.service.exception.LogicException;
-import by.training.webapplication.util.MD5;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import static by.training.webapplication.service.command.ActionFactory.logger;
-
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 /**
  * Created by Tanya on 28.09.2016.
  */
 public class ObjectService {
     public boolean removeObj(String elem) throws LogicException {
-
         Connection cn = null;
-
-
         try {
             cn = DBPoolConnection.initConnectionPool().getConnection();
             try {
                 return new ObjectDAO(cn).delete(elem);
             } catch (DaoException e) {
+                LOGGER.error(e);
                 throw new LogicException(e);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         } finally {
             if (cn != null) {
                 try {
-                    DBPoolConnection.initConnectionPool().putConnection(cn);
+                    cn.close();
                 } catch (SQLException e) {
-
-                    e.printStackTrace();
-
+                    LOGGER.error(e);
                 }
             }
         }
@@ -49,28 +40,46 @@ public class ObjectService {
 
     public boolean addObject(ObjPortfolio entity) throws LogicException {
         Connection cn = null;
-
-
         try {
             cn = DBPoolConnection.initConnectionPool().getConnection();
-
             try {
                 return new ObjectDAO(cn).create(entity);
-
             } catch (DaoException e) {
+                LOGGER.error(e);
                 throw new LogicException(e);
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);;
         } finally {
             if (cn != null) {
                 try {
-                    DBPoolConnection.initConnectionPool().putConnection(cn);
+                    cn.close();
                 } catch (SQLException e) {
+                    LOGGER.error(e);
+                }
+            }
+        }
+        return false;
+    }
 
-                    e.printStackTrace();
-
+    public boolean updateObject(ObjPortfolio entity) throws LogicException {
+        Connection cn = null;
+        try {
+            cn = DBPoolConnection.initConnectionPool().getConnection();
+            try {
+                return new ObjectDAO(cn).update(entity);
+            } catch (DaoException e) {
+                LOGGER.error(e);
+                throw new LogicException(e);
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e);;
+        } finally {
+            if (cn != null) {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    LOGGER.error(e);
                 }
             }
         }

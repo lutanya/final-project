@@ -8,10 +8,15 @@ import java.util.ResourceBundle;
 public class MessageManager {
 
     private final static ResourceBundle resourceBundle = ResourceBundle.getBundle("message");
+    private final static ResourceBundle resourceBundleUS = ResourceBundle.getBundle("message_en_US");
 
     public MessageManager(){}
 
-    public String getProperty(String key){
-        return resourceBundle.getString(key);
+    public String getProperty(String key, String local){
+        if(local.equals("ru_RU")) {
+            return resourceBundle.getString(key);
+        }else{
+            return resourceBundleUS.getString(key);
+        }
     }
 }

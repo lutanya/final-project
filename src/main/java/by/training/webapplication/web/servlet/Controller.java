@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 
 /**
  * Created by Tanya on 20.07.2016.
@@ -22,8 +23,6 @@ import java.net.URL;
 @MultipartConfig
 @WebServlet("/controller")
 public class Controller extends HttpServlet {
-
-    private static final Logger LOG = LogManager.getLogger();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
@@ -35,16 +34,15 @@ public class Controller extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LOG.debug("Processing request: " + request);
-
+        LOGGER.debug("Processing request: " + request);
         String page = null;
-
+        //SessionRequestContent requestContent = new SessionRequestContent(request);
         ActionFactory client = new ActionFactory();
         ActionCommand command = client.defineCommand(request);
         try {
             page = command.execute(request);
         } catch (CommandException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         if (page != null) {
 

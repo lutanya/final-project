@@ -28,11 +28,11 @@
             <input type="hidden" name="command" value="login" />
 
             <label><fmt:message key="label.login" bundle="${rb}"></fmt:message>
-                <input type="text" name="login" placeholder="Логин" id="inplog">
+                <input type="text" name="login" placeholder="<fmt:message key="label.login" bundle="${rb}"></fmt:message>" id="inplog">
             </label><br><br>
 
             <label><fmt:message key="label.log.pass" bundle="${rb}"></fmt:message>
-                <input type="password" name="password" placeholder="Пароль" id="inppass">
+                <input type="password" name="password" placeholder="<fmt:message key="label.log.pass" bundle="${rb}"></fmt:message>" id="inppass">
             </label><br> <br/>
             ${errorLoginPwdMessage}
             <br/>

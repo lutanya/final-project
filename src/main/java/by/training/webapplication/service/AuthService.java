@@ -6,7 +6,10 @@ import by.training.webapplication.database.exception.DaoException;
 import by.training.webapplication.model.User;
 import by.training.webapplication.service.exception.LogicException;
 import by.training.webapplication.util.MD5;
-import static by.training.webapplication.service.command.ActionFactory.logger;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static by.training.webapplication.service.command.ActionFactory.LOGGER;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,30 +23,29 @@ public class AuthService {
         MD5 md5 = new MD5();
         Connection cn = null;
         //boolean flag = false;
-
-        if(enterLogin != "" && enterPass != "") {
+        if (enterLogin != "" && enterPass != "") {
             try {
                 cn = DBPoolConnection.initConnectionPool().getConnection();
-
                 UserDAO userDAO = new UserDAO(cn);
                 User user = userDAO.findEntityById(enterLogin);
-
                 if (user.getLogin() != null && user.getPassword().equals(md5.getHash(enterPass))) {
-                    logger.debug("Enter to system");
+                    LOGGER.debug("Enter to system");
+
                     return true;
                 } else {
-                    logger.debug("Wrong password");
+                    LOGGER.debug("Wrong password");
                 }
             } catch (DaoException e) {
+                LOGGER.error(e);
                 throw new LogicException(e);
             } catch (SQLException e) {
-                e.printStackTrace();
-            }finally {
-                if(cn != null){
-                    try { DBPoolConnection.initConnectionPool().putConnection(cn);
+                LOGGER.error(e);
+            } finally {
+                if (cn != null) {
+                    try {
+                        DBPoolConnection.initConnectionPool().putConnection(cn);
                     } catch (SQLException e) {
-
-                        e.printStackTrace();
+                        LOGGER.error(e);
                     }
                 }
             }
@@ -59,47 +61,46 @@ public class AuthService {
             try {
                 flag = userDAO.isEntityById(login);
             } catch (DaoException e) {
+                LOGGER.error(e);
                 throw new LogicException(e);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         return flag;
     }
 
-    public boolean isUserRegistered(User entity){
+    public boolean isUserRegistered(User entity) throws LogicException {
         MD5 md5 = new MD5();
         boolean flag = false;
-
         try {
             Connection cn = DBPoolConnection.initConnectionPool().getConnection();
-
             UserDAO userDAO = new UserDAO(cn);
             User user = null;
             try {
                 user = userDAO.findEntityById(entity.getLogin());
-            } catch (DaoException e) {
-                e.printStackTrace();
-            }
 
+            } catch (DaoException e) {
+                LOGGER.error(e);
+                throw new LogicException(e);
+            }
             if (user.getLogin() == null) {
                 entity.setPassword(md5.getHash(entity.getPassword()));
-                if (userDAO.create(entity)) {
-                    logger.debug("Save user");
-                    flag = true;
-                } else {
-                    logger.debug("Wrong password");
-
+                try {
+                    if (userDAO.create(entity)) {
+                        LOGGER.debug("Save user");
+                        flag = true;
+                    } else {
+                        LOGGER.debug("Wrong password");
+                    }
+                } catch (DaoException e) {
+                    LOGGER.error(e);
+                    throw new LogicException(e);
                 }
             }
-
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
-
         return flag;
     }
-
-
 }

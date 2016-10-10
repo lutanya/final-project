@@ -12,7 +12,8 @@ public class MessageManagerTest {
 
     @Test
     public void getPropertyTest()  {
-        String property = new MessageManager().getProperty("message.nullpage");
+        String local="ru_RU";
+        String property = new MessageManager().getProperty("message.nullpage",local);
         assertNotNull(property);
     }
 

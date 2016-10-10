@@ -49,6 +49,11 @@ public enum CommandEnum {
             this.command = new ViewMessageCommand();
         }
     },
+    VIEWORDER{
+        {
+            this.command = new ViewOrderCommand();
+        }
+    },
     EDITINGPORTFOLIO{
         {
             this.command = new EditingPortfCommand();
